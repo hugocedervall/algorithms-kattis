@@ -5,17 +5,14 @@ using namespace std;
 
 double binSearch(double left, double right, double LL, double L) {
 
-    // Allowed error range
-    double errorRoom = 1e-9;
-
     // Force runs to get precision
-    int threshold = 28;
+    int threshold = 40;
     int counter = 0;
 
     double foundDistance = -1;
 
     // While left and right pointers dont cross
-    while (left <= right && (foundDistance == -1 || counter <= threshold )) {
+    while (left <= right && counter <= threshold) {
         double theta = (left + right) / 2;
 
         /*
@@ -28,16 +25,14 @@ double binSearch(double left, double right, double LL, double L) {
         double lHat = 2.0 * sin(theta / 2.0) * r;
 
         // Solution found
-        if (abs(lHat - L) < errorRoom) {
-            foundDistance =  (r - cos(theta / 2) * r);
-        }
+        foundDistance =  (r - cos(theta / 2) * r);
+
 
         if (lHat > L) {
             left = theta;
         } else {
             right = theta;
         }
-        //printf("counter: %d\n", counter);
         counter ++;
     }
     return foundDistance;
