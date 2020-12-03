@@ -8,54 +8,66 @@
 using namespace std;
 
 
-int algo(const set<int> & numbers) {
+tuple<int, bool> algo(const set<int> &numbers) {
     // number -> pairs used to construct number
     map<int, vector<tuple<int, int>>> doubleNumbers;
 
 
     for (auto it = numbers.begin(); it != numbers.end(); it++) {
-        for (auto it2 = next(it); it2 != numbers.end(); it2++){
+        for (auto it2 = next(it); it2 != numbers.end(); it2++) {
             doubleNumbers[*it2 + *it].push_back(make_tuple(*it, *it2));
         }
     }
 
 
-    map<int, vector<tuple<int,int,int>>> trippleNumbers;
-    for (auto it = numbers.begin(); it != numbers.end(); it++) {
-        for (auto it2 = doubleNumbers.begin(); it2 != doubleNumbers.end(); it2++){
-            tuple<int,int,int> a = make_tuple(*it, get<0>(it2->second), get<1>(it2->second)[1]);
-            //trippleNumbers[*it + it2->first].push_back();
+    int biggest = *min_element(numbers.begin(), numbers.end());
+    bool valid = false;
+
+    for (auto d : numbers) {
+        for (auto c: numbers) {
+            if (d == c) continue;
+
+            if (doubleNumbers.find(d - c) != doubleNumbers.end()) {
+                bool found = false;
+                // Check that c or d has not been used in composition of a+b+c=d before.
+                for (tuple<int, int> nums : doubleNumbers[d - c]) {
+                    if (get<0>(nums) == c || get<1>(nums) == c || get<0>(nums) == d || get<1>(nums) == d) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found && d >= biggest) {
+                    biggest = d;
+                    valid = true;
+                    //break;
+                }
+            }
+
         }
+
     }
 
-
-    int biggest = 0;
-    for (auto num : numbers) {
-        if (find(trippleNumbers.begin(), trippleNumbers.end(), num) != trippleNumbers.end()) {
-            biggest = num;
-        }
-    }
-
-    return biggest;
+    return make_tuple(biggest, valid);
 }
 
 
 int main() {
 
+
     int N;
-    cin >> N;
+    while(cin >> N && N != 0) {
 
-    set<int> numbers;
-    for (int i = 0; i < N; i++) {
-        int temp;
-        cin >> temp;
-        numbers.insert(temp);
+        set<int> numbers;
+        for (int i = 0; i < N; i++) {
+            int temp;
+            cin >> temp;
+            numbers.insert(temp);
+        }
+
+        tuple<int, bool> results = algo(numbers);
+
+        if (!get<1>(results)) cout << "no solution" << endl;
+        else cout << get<0>(results) << endl;
     }
-
-    int results = algo(numbers);
-
-    if (results == 0) cout << "no solution" << endl;
-    else cout << results << endl;
-
     return 0;
 }
