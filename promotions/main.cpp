@@ -20,6 +20,7 @@ bool visitedParents(int n, map<int, node> &nodes) {
     return true;
 }
 
+// Nodes that do not have any parent that is not visited
 vector<int> getFreeNodes(map<int, node> &nodes) {
     vector<int> freeNodes;
     for (auto n : nodes) {
@@ -28,7 +29,7 @@ vector<int> getFreeNodes(map<int, node> &nodes) {
     return freeNodes;
 }
 
-vector<set<int>> algo5(int num, map<int, node> nodes) {
+vector<set<int>> algorithm(int num, map<int, node> nodes) {
     auto freeNodes = getFreeNodes(nodes);
     vector<set<int>> combinations;
     for (auto n : freeNodes) {
@@ -39,7 +40,7 @@ vector<set<int>> algo5(int num, map<int, node> nodes) {
         }
         auto nodesCopy = nodes;
         nodesCopy[n].marked = true;
-        auto newCombos = algo5(temp, nodesCopy);
+        auto newCombos = algorithm(temp, nodesCopy);
         for (auto s : newCombos) {
             s.insert(n);
             combinations.push_back(s);
@@ -49,6 +50,7 @@ vector<set<int>> algo5(int num, map<int, node> nodes) {
 
 }
 
+// Returns intersection between given sets
 set<int> setIntersection(vector<set<int>> sets) {
     set<int> intersection;
     if (sets.size()) intersection = sets.at(0);
@@ -72,7 +74,6 @@ int main() {
         // Create nodes for all
         for (int i = 0; i < E; ++i) {
             node temp;
-            temp.name = i;
             nodes[i] = temp;
         }
 
@@ -83,22 +84,22 @@ int main() {
             nodes[b].parents.push_back(a);
         }
 
-        auto minSet = algo5(A, nodes);
-        auto maxSet = algo5(B, nodes);
+        auto solutionA = algorithm(A, nodes);
+        auto solutionB = algorithm(B, nodes);
 
-        auto s1 = setIntersection(minSet);
-        auto s2 = setIntersection(maxSet);
+        // Which nodes that appear in every solution
+        auto s1 = setIntersection(solutionA);
+        auto s2 = setIntersection(solutionB);
 
-
-        set<int> a;
-        for (auto s : maxSet) {
-            a.insert(s.begin(), s.end());
+        // See which nodes that can be chosen
+        set<int> s3;
+        for (auto s : solutionB) {
+            s3.insert(s.begin(), s.end());
         }
-
 
         cout << s1.size() << endl;
         cout << s2.size() << endl;
-        cout << E - a.size() << endl;
+        cout << E - s3.size() << endl;
     }
 
     return 0;
