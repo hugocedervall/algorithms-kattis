@@ -2,6 +2,8 @@
  * @AUTHOR: Hugo Cedervall
  * @DATE: 2021-01-28
  * @PROBLEM: intervalcover
+ *  Finding the minimum amount of intervals to completely cover a given interval.
+ *  Also recall the actual indexes included in the solution.
  *
  * Time complexity: O(n*log(n))
 */
@@ -13,7 +15,7 @@
 
 using namespace std;
 
-
+/* interval is used to represent an interval where low <= high */
 struct interval {
     double low;
     double high;
@@ -27,10 +29,16 @@ struct interval {
     }
 };
 
+/**
+ * @param coverInterval the interval that shall be covered
+ * @param intervals intervals used to cover @param coverInterval
+ * @return indexes of intervals required to cover @param coverInterval with
+ * minimum amount of intervals.
+ */
 vector<int> cover(interval coverInterval, vector<interval> &intervals) {
     vector<interval> res;
 
-    // Sort the intervals
+    // Sort the intervals based on left interval value
     // complexity: O(n log(n))
     sort(intervals.begin(), intervals.end());
 
@@ -39,9 +47,10 @@ vector<int> cover(interval coverInterval, vector<interval> &intervals) {
     bool bestSet = false;
     double bestHigh;
     interval curr{};
+    // Time complexity O(n)
     for (int i = 0; i < intervals.size(); ++i) {
         curr = intervals[i];
-
+        // If solution
         if (curr.low <= threshold && coverInterval.high <= curr.high) {
             res.push_back(curr);
             break;
