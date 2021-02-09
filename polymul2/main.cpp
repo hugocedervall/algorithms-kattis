@@ -4,10 +4,17 @@
  * @PROBLEM: polymul2
  *      Given two polynomials of given degrees, the task is
  *      to multiply these polynomials and output the product
- *      in an efficient method.
+ *      in an efficient method. This is solved by transforming
+ *      the polynomials into the frequency domain, multiplying
+ *      them, and then transforming them back into time domain.
+ *      This is possible since convolution in time domain is
+ *      the same as multiplication in frequency domain.
  *
  * @COMPLEXITIES:
  *      TIME: O(n*log(n))
+ *          Both fast fourier transform and inverse fast fourier
+ *          transform have time complexities O(n*log(n)), the total
+ *          complexity will be the same.
  *
 */
 
@@ -23,12 +30,11 @@ typedef complex<double> compd;
 
 /**
  * Cooley–Tukey FFT algorithm (fast fourier transform). Computes the fourier transform
- * of input in O(n*log(n)) where n is amount of elements in input.
+ * of input in O(n*log(n)) where n is amount of elements in input. Implemented from
+ * pseudo code from: https://en.wikipedia.org/wiki/Cooley%E2%80%93Tukey_FFT_algorithm
  *
- * Implemented from pseudo code from:
- *      https://en.wikipedia.org/wiki/Cooley%E2%80%93Tukey_FFT_algorithm
- *
- * @param poly complex polynomial coefficients in time domain
+ * @param poly complex polynomial coefficients in time domain. This polynomial values
+ * will be replaced with the values in the frequency domain.
  */
 void fft(vector<compd> &poly) {
     int n = poly.size();
@@ -45,6 +51,7 @@ void fft(vector<compd> &poly) {
     vector<compd> unityRoots(n);
     for (int i = 0; i < n; ++i) {
         // Complex representation, same as (cos, sin) of theta
+        // with magnitude 1
         unityRoots[i] = polar(1.0, -2 * M_PI * i / n);
     }
 
@@ -59,10 +66,14 @@ void fft(vector<compd> &poly) {
 }
 
 /**
- * Inverse of Fast Fourier Transform (ifft), formula found here:
- *      https://rosettacode.org/wiki/Fast_Fourier_transform
+ * Inverse of Fast Fourier Transform (ifft), transforms
+ * the given complex numbers from frequency domain to
+ * time domain. Formula found here:
+ *  https://rosettacode.org/wiki/Fast_Fourier_transform
  *
- * @param fPoly complex polynomial coefficients in frequency domain
+ * @param fPoly complex polynomial coefficients in frequency
+ * domain, this object will be changed into the inverse
+ * fourier transform of its initial state
  */
 void ifft(vector<compd> &fPoly) {
     vector<compd> res(fPoly.size());
@@ -77,7 +88,15 @@ void ifft(vector<compd> &fPoly) {
         fPoly[i] /= fPoly.size();
 }
 
-
+/**
+ * Multiplies @param poly1 and @param poly2. This is done in the
+ * frequency domain, since is can be done in O(n*log(n)).
+ * This is the same as the convolution in the time domain.
+ *
+ * @param poly1 polynomial coefficients that shall be convoluted
+ * @param poly2 polynomial coefficients that shall be convoluted
+ * @return The product of @param poly1 and @param poly2
+ */
 vector<int> polyMult(vector<compd> &poly1, vector<compd> &poly2) {
     // Fourier Transform
     fft(poly1);
@@ -94,6 +113,7 @@ vector<int> polyMult(vector<compd> &poly1, vector<compd> &poly2) {
     for (int i = 0; i < product.size(); ++i) {
         res[i] = round(real(product[i]));
     }
+    // Product polynomial
     return res;
 }
 
@@ -101,7 +121,6 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(NULL);
 
-    // Insert code here
     int T, n1, n2;
     double tmp;
     cin >> T;
@@ -121,11 +140,11 @@ int main() {
         }
 
         // Since resulting polynomial can be much larger than
-        // poly1 and poly2, create bigger vectors
+        // poly1 and poly2, create bigger vectors on the total size
         int maxSize = n1 + n2 + 2;
         // Find next power of 2 which is bigger than maxSize, since the fft
-        // requires log2(n) to go equal
-        maxSize = pow(2, ceil(log(maxSize)/log(2)));
+        // requires log2(n) to be even.
+        maxSize = pow(2, ceil(log(maxSize) / log(2)));
         vector<compd> poly1R(maxSize, 0);
         vector<compd> poly2R(maxSize, 0);
         for (int i = 0; i < poly1.size(); ++i)
@@ -136,14 +155,13 @@ int main() {
         vector<int> res = polyMult(poly1R, poly2R);
         // Remove trailing zeros
         int i;
-        for (i = res.size() - 1; i > 0; --i) {
+        for (i = res.size() - 1; i > 0; --i)
             if (res[i] != 0) break;
-        }
+
         cout << i << '\n';
         if (i > 0) {
-            for (int j = 0; j <= i; ++j) {
+            for (int j = 0; j <= i; ++j)
                 cout << res[j] << " ";
-            }
             cout << '\n';
         }
     }
