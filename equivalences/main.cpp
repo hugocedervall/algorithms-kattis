@@ -59,13 +59,6 @@ int solution(int nrNodes, unordered_map<int, vector<int>> &vertexes) {
     // Mapping from SCC ID to sccNodes
     unordered_map<int, vector<int>> sccNodes;
 
-    // Init all non initiated vertexes with empty vector
-    //for (int i = 0; i < nrNodes; ++i) {
-    //if (vertexes.find(i) == vertexes.end())
-    //    vertexes[i] = {};
-    //sccNodes[i] = {};
-    //}
-
     // Stack of vertexes
     stack<int> s;
     // Keep track of which vertexes that are on stack
@@ -109,8 +102,6 @@ int solution(int nrNodes, unordered_map<int, vector<int>> &vertexes) {
             if (in[i] == 0) intZeroCount++;
             if (out[i] == 0) outZeroCount++;
         }
-
-
     return max(intZeroCount, outZeroCount);
 }
 
@@ -124,22 +115,17 @@ int main() {
         cin >> n >> m;
 
         unordered_map<int, vector<int>> vertexes;
-        //for (int i = 1; i < m; ++i)
-        //    vertexes[i] = {};
-
 
         for (int i = 0; i < m; ++i) {
             cin >> from >> to;
-            from --, to--;
+            // transform to nodes [0,..,m-1] instead of [1,..,m]
+            from--, to--;
             //edges[i] = edge{from, to};
             vertexes[from].push_back(to);
         }
-        // TODO: handle case where n is 1
         int res = solution(n, vertexes);
-
         cout << res << '\n';
     }
-
-
+    cout << flush;
     return 0;
 }
