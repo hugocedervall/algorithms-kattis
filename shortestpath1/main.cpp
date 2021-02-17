@@ -6,7 +6,7 @@
  *      solved by a standard Dijkstras implementation with a priority queue.
  *
  *  @COMPLEXITIES:
- *      Time: O((E+V)*log(V) + V), where E is number of edges and V number of vertexes.
+ *      Time: O((E+V)*log(V)), where E is number of edges and V number of vertexes.
  *          The implementation uses adjacency lists and priority queue which results
  *          in the above time complexity.
 */
