@@ -33,13 +33,18 @@ struct edge {
  * @param edges mapping from vertex to all its outgoing edges
  * @param start from which vertex the path will be calculated.
  * @param n amount of vertextes in graph
- * @returns distances to all vertexes from given @param start vertex. Vertexes
- * which are not reachable will have distance INT_MAX.
+ * @returns pair consisting of:
+ *          - distances to all vertexes from given @param start vertex. Vertexes
+ *             which are not reachable will have distance INT_MAX.
+ *          - parents of each node. This can be used to construct the path to each
+ *             node from start node.
  */
-vector<int> shortestPath(vector<vector<edge>> &edges, const int &start, int n) {
+pair<vector<int>, vector<int>> shortestPath(vector<vector<edge>> &edges, const int &start, int n) {
     vector<int> distances(n, INT_MAX);
+    vector<int> parents(n, -1);
     // Distance from start to itself is 0
     distances[start] = 0;
+    parents[start] = start;
 
     // Custom compare function for priority queue, will sort in increasing
     // order based on the distance to vertex.
@@ -76,11 +81,12 @@ vector<int> shortestPath(vector<vector<edge>> &edges, const int &start, int n) {
             // If there is a shorter distance to vertex than previously discovered
             if (newDist < distances[e.to]) {
                 distances[e.to] = newDist;
+                parents[e.to] = curr.first;
                 q.push(make_pair(e.to, newDist));
             }
         }
     }
-    return distances;
+    return make_pair(distances, parents);
 }
 
 int main() {
@@ -99,7 +105,7 @@ int main() {
         }
 
         // Distances from startnode to each other node
-        auto distances = shortestPath(edges, s, n);
+        auto distances = shortestPath(edges, s, n).first;
 
         // Handle queries
         for (int i = 0; i < q; ++i) {
