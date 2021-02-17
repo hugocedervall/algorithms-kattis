@@ -51,8 +51,10 @@ shortestPath(vector<edge> &edges, vector<vector<edge>> &nodeEdges, const int &st
         for (int j = 0; j < edges.size(); ++j) {
             int u = edges[j].from, v = edges[j].to;
             int weight = edges[j].weight;
-            if (distances[u] != INT_MAX && distances[u] + weight < distances[v])
+            if (distances[u] != INT_MAX && distances[u] + weight < distances[v]) {
                 distances[v] = distances[u] + weight;
+                parents[v] = u;
+            }
         }
     }
 
