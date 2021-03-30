@@ -9,8 +9,6 @@
 
 using namespace std;
 
-
-
 // Represents capacity in a edge. Used to keep track of
 // used capacity and remaining capacity.
 struct cap {
@@ -100,10 +98,13 @@ int main() {
 
     int n, m;
     while (cin >> n && n != -1 && cin >> m) {
-
+        // The highest initial score some team has
+        int biggest = 0;
         vector<int> points(n, 0);
-        for (int i = 0; i < n; ++i)
+        for (int i = 0; i < n; ++i) {
             cin >> points[i];
+            if (i != n - 1 && points[i] > biggest) biggest = points[i];
+        }
 
         int v = n + m + 1;
         int source = 0, sink = v;
@@ -115,15 +116,14 @@ int main() {
             matches[i] = {a, b};
         }
 
-
         vector<vector<int>> adj(v + 1, vector<int>());
-        // u, v to remaining and used flow
         vector<vector<cap>> caps(v + 1, vector<cap>(v + 1));
 
         // First [1...m] nodes represents the matches
         // Following [m+1...m+n] nodes represents the teams
         // Node 0 is src, and node n+m+1 represents sink
 
+        int posWins = 0; // Amount of wins possible for our desired winner
         int nodeNr;
         for (int i = 0; i < matches.size(); ++i) {
             pair<int, int> match = matches[i];
@@ -131,50 +131,73 @@ int main() {
             // The maximum amount of points our desired team can get
             // if they win every match
             if (match.first == n || match.second == n) {
-                points[n-1] += 2;
+                points[n - 1] += 2;
+                posWins++;
                 continue;
             }
 
-            int a = match.first + m + 1, b = match.second + m + 1;
+            int a = match.first + m, b = match.second + m;
 
             // The node id is 1 more than index
             nodeNr = i + 1;
 
             // Match has 2 points to give
             adj[source].push_back(nodeNr);
-            // TODO: += 2 insead of just 2
+            adj[nodeNr].push_back(source);
             caps[source][nodeNr] = cap{2, 0};
 
             // Add path from match to the teams competing
             adj[nodeNr].push_back(a);
-            adj[match.first].push_back(nodeNr);
-            caps[nodeNr][match.first] = cap{INT_MAX, 0};
+            adj[a].push_back(nodeNr);
+            caps[nodeNr][a] = cap{2, 0};
 
             adj[nodeNr].push_back(b);
-            adj[match.second].push_back(nodeNr);
-            caps[nodeNr][match.second] = cap{INT_MAX, 0};
+            adj[b].push_back(nodeNr);
+            caps[nodeNr][b] = cap{2, 0};
         }
 
         // Add path from all teams to sink, with initial used
         // capacity as their initial scores
         for (int i = 0; i < n; ++i) {
-            int nodeNr = i + m + 1;
+            nodeNr = i + m + 1;
 
             adj[nodeNr].push_back(sink);
             adj[sink].push_back(nodeNr);
             // We must only send so much that no team gets more points
             // than our desired winner
-            caps[nodeNr][sink] = cap{points[n-1] - points[i] - 1, 0};
+            caps[nodeNr][sink] = cap{max(points[n - 1] - points[i] - 1, 0), 0};
         }
 
-
         int flow = maxflow(source, sink, adj, caps);
-        cout << flow << endl;
 
-        // output
-        // victory of the first team by 0, a draw by 1, and the victory of the second team by 2
+        // Check that amount of point given is the same as
+        // our initial
+        if ((flow + posWins * 2) == m * 2 && biggest < points[n - 1]) {
+            vector<int> results(m, 0);
+            // Go through edges from matches to teams
+            for (int i = 1; i <= m; ++i) {
+                pair<int, int> match = matches[i - 1];
+                int teamA = match.first + m;
+
+                if (match.first == n) {
+                    results[i - 1] = 0;
+                } else if (match.second == n) {
+                    results[i - 1] = 2;
+                } else {
+                    // If the edge
+                    int usedCap = caps[i][teamA].used;
+                    if (usedCap == 2) results[i - 1] = 0; // Team A wins
+                    else if (usedCap == 1) results[i - 1] = 1; // Draw
+                    else results[i - 1] = 2; // Team B wins
+                }
+            }
+            for (auto &r : results) cout << r << " ";
+            cout << '\n';
+        } else {
+            cout << "NO" << '\n';
+        }
     }
-
+    cout << flush;
 
     return 0;
 }
