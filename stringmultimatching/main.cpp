@@ -180,8 +180,9 @@ public:
      * that the object contains.
      *
      * @param text The text to search for occurances of patterns in
-     * @param res For each pattern, all the positions of occurances for
-     * the pattern in the text. The positions are specified by the last
+     * @param res This is where the results will be inserted.
+     * For each pattern, all the positions of occurances for the
+     * pattern in the text. The positions are specified by the last
      * index in the pattern. Example: text = "hej", pattern="ej" -> 2
      */
     void searchWords(const string &text, vector<vector<int>> &res) {
