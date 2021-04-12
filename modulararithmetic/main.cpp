@@ -27,11 +27,14 @@ l mod(l a, l b) {
 }
 
 /**
+ * Computes the greatest common dicisor (GCD) of two integers,
+ * and finds a way to represent the GCD in terms of a and b. The
+ * results will be: a*x + b*y = gcd(a,b)
  *
- * @param a
- * @param b
- * @param x Where result of first coefficient will be put
- * @param y Where result of second coefficient will be put
+ * @param a The first integer to compute gcd for
+ * @param b The second integer to compute gcd for
+ * @param x Where result of first coefficient will be inserted
+ * @param y Where result of second coefficient will be inserted
  * @return
  */
 l extendedEucliden(l a, l b, l *x, l *y) {
@@ -50,7 +53,7 @@ l extendedEucliden(l a, l b, l *x, l *y) {
 /**
  * Calculates x such that a*x = 1 (mod m). In other words,
  * calculate the modular multiplicative inverse x of a such that
- * the product a*x i congurent to 1 modulo m.
+ * the product a*x is congurent to 1 modulo m.
  *
  * @param a The number to calculate the corresponding multiplicative
  * inverse of.
@@ -88,7 +91,9 @@ l multiplyMod(l a, l b, l m) {
 }
 
 /**
- * Calculates (a/b)%m. This is done through
+ * Calculates (a/b)%m. This is done through calculating
+ * the modular inverse of @param b, and then calculating the
+ * modular multiplicative of a and the inverse of b.
  */
 l divideMod(l a, l b, l m) {
     l inv = modInv(b, m);
@@ -109,7 +114,6 @@ int main() {
             cin >> a >> op >> b;
 
             l res = -1;
-
             switch (op) {
                 case '+':
                     res = addMod(a, b, n);
