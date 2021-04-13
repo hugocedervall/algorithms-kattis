@@ -5,7 +5,7 @@
  *      The problem is to find the minimal integer x, such that
  *      x = a (mod n) and x = b (mod m). n and m must not be
  *      relative prime. The solution is based on the inverse modulu
- *      of m and n.
+ *      of m / lcd(m,n) and n / lcd(m,n).
  *
  * @COMPLEXITIES:
  *     TIME: n*log(n)
@@ -78,7 +78,7 @@ ll bigModMul(ll a, ll b, ll m) {
 
 /**
  * Calculates the minimum value for a variable x such that x = a (mod n)
- * and x = b (mod m). n and m must not be relative prime.
+ * and x = b (mod m), n and m must not be relative prime.
  *
  * @return if possible solution, x (see properties above), and least
  * common multiple of m and n.
@@ -91,7 +91,9 @@ tuple<bool, ll, ll> findMinX(ll a, ll n, ll b, ll m) {
 
     ll x, y;
     extendedEucliden(n / g, m / g, &x, &y);
-    ll nmLcd = n / g * m; // least common multiple
+
+    // least common multiple
+    ll nmLcd = n / g * m;
 
     ll res = bigModMul(a * y, m / g, nmLcd);
     res += bigModMul(b * x, n / g, nmLcd);

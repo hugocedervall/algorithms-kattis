@@ -3,7 +3,8 @@
  * @DATE: 2021-04-12
  * @PROBLEM: chineseremainder
  *      The problem is to find the minimal integer x, such that
- *      x = a (mod n) and x = b (mod m). The solution is based on
+ *      x = a (mod n) and x = b (mod m), where m and n are
+ *      relative prime. The solution is based on
  *      the inverse modulu of m and n.
  *
  * @COMPLEXITIES:
@@ -96,7 +97,7 @@ ll bigModMul(ll a, ll b, ll m) {
 
 /**
  * Calculates the minimum value for a variable x such that x = a (mod n)
- * and x = b (mod m).
+ * and x = b (mod m) where m and n are relative prime.
  *
  * @return m * n, and x (see properties above)
  */
