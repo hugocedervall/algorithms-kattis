@@ -8,7 +8,7 @@
  *      the inverse modulu of m and n.
  *
  * @COMPLEXITIES:
- *     TIME: n*log(n)
+ *     TIME: log(n), where n = min(a,b) (from inputs)
 */
 
 #include <bits/stdc++.h>

@@ -8,7 +8,7 @@
  *      of m / lcd(m,n) and n / lcd(m,n).
  *
  * @COMPLEXITIES:
- *     TIME: n*log(n)
+ *     TIME: log(n), where n = min(a,b) (from input)
 */
 
 #include <bits/stdc++.h>
