@@ -1,11 +1,16 @@
+/*
+ * @AUTHOR: Hugo Cedervall
+ * @DATE: 2021-04-20
+ * @PROBLEM: howmanyzeros
+*/
+
+#include <bits/stdc++.h>
 #include <iostream>
-#include <string>
-#include <algorithm>
 
 using namespace std;
 
 // O(len(d))
-unsigned int algo(long d) {
+unsigned int solution(long d) {
     unsigned int results = 0;
     unsigned int i = 1;
 
@@ -16,15 +21,14 @@ unsigned int algo(long d) {
         unsigned int a = int(b / 10);
         b = b % 10;
 
-        if (a == 0) {
+        if (a == 0)
             return results;
-        }
 
-        if (b == 0) {
+        if (b == 0)
             results += (a - 1) * i + c + 1;
-        } else {
+        else
             results += a * i;
-        }
+
         i *= 10;
     }
 }
@@ -34,8 +38,8 @@ int main() {
     unsigned int m, n;
 
     while (cin >> m >> n && !(m == -1 && n == -1)) {
-        unsigned int nn = algo(n);
-        unsigned int mm = algo(m);
+        unsigned int nn = solution(n);
+        unsigned int mm = solution(m);
 
         // If 0's in m, add occurrences to total
         string mStr = to_string(m);
@@ -44,7 +48,6 @@ int main() {
 
         cout << nn - mm << endl;
     }
-
 
     return 0;
 }
